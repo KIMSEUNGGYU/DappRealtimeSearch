@@ -1,0 +1,19 @@
+{
+  "name": "dapprealtimesearch",
+  "version": "1.0.0",
+  "description": "DappRealtimeSearch",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IGMD/DappRealtimeSearch.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IGMD/DappRealtimeSearch/issues"
+  },
+  "homepage": "https://github.com/IGMD/DappRealtimeSearch#readme"
+}
