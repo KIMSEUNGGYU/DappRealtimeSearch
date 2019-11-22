@@ -1,6 +1,6 @@
-var request = require('request');
-var DomParser = require('dom-parser');
-var parser = new DomParser();
+const request = require('request');
+const DomParser = require('dom-parser');
+const parser = new DomParser();
 
 function makeOptions() {
     const uriJson = {
@@ -9,35 +9,31 @@ function makeOptions() {
         naver: 'https://naver.com',
     };
 
-    if (process.argv[2].includes('google')) {
-        name = 'google';
-        options = {
-            uri: uriJson.google,
-            method: 'GET',
-        };
-    } else if (process.argv[2].includes('naver')) {
-        name = 'naver';
-        options = {
-            uri: uriJson.naver,
-            method: 'GET',
-        };
+    const options = {};
+    const hostname = process.argv[2];
+
+    if (uriJson[hostname]) {
+        options.uri = uriJson[hostname];
+        options.method = 'GET';
+    } else {
+        console.log(Error(`${hostname} is not in uri json properties`));
     }
-    return getPageHTML(options, name);
+    return getPageHTML(options, hostname);
 }
 
-function getPageHTML(options, name) {
+function getPageHTML(options, hostname) {
     request.get(options, function(error, response, body) {
         if (error) {
             return `Check Error : ${error}`;
         }
         if (response.statusCode == 200) {
-            let doc = parser.parseFromString(body, 'text/html');
-            console.log(doc);
-            let docs = doc.rawHTML.split('\n');
+            let docs = parser
+                .parseFromString(body, 'text/html')
+                .rawHTML.split('\n');
 
-            if (name == 'google') {
+            if (hostname == 'google') {
                 return parsingGoogle(docs);
-            } else if (name == 'naver') {
+            } else if (hostname == 'naver') {
                 return parsingNaver(docs);
             }
         } else {
@@ -47,27 +43,27 @@ function getPageHTML(options, name) {
 }
 
 function parsingNaver(docs) {
-    let keys = [];
-    let values = [];
+    let ranks = [];
+    let keywords = [];
     docs.forEach(element => {
         if (element.includes('class="ah_r"')) {
-            key = element
+            rank = element
                 .replace('<span class="ah_r">', '')
                 .replace('</span>', '');
-            keys.push(key);
+            ranks.push(rank);
         } else if (element.includes('class="ah_k"')) {
-            value = element
+            keyword = element
                 .replace('<span class="ah_k">', '')
                 .replace('</span>', '');
-            values.push(value);
+            keywords.push(keyword);
         }
     });
-    console.log(keys);
-    console.log(values);
+    console.log(ranks);
+    console.log(keywords);
 }
 function parsingGoogle(docs) {
-    let keys = [];
-    let values = [];
+    let ranks = [];
+    let keywords = [];
     docs.forEach(element => {
         // console.log(element);
         // if (element.includes('class="trending-feed-page-wrapper"')) {
@@ -91,24 +87,24 @@ makeOptions();
 //             // console.log(response.body);
 //             var doc = parser.parseFromString(body, 'text/html');
 //             docs = doc.rawHTML.split('\n');
-//             keys = [];
-//             values = [];
+//             rank = [];
+//             keywords = [];
 
 //             docs.forEach(element => {
 //                 if (element.includes('class="ah_r"')) {
 //                     key = element
 //                         .replace('<span class="ah_r">', '')
 //                         .replace('</span>', '');
-//                     keys.push(key);
+//                     rank.push(key);
 //                 } else if (element.includes('class="ah_k"')) {
 //                     value = element
 //                         .replace('<span class="ah_k">', '')
 //                         .replace('</span>', '');
-//                     values.push(value);
+//                     keywords.push(value);
 //                 }
 //             });
-//             console.log(keys);
-//             console.log(values);
+//             console.log(rank);
+//             console.log(keywords);
 //         }
 //     });
 // }
