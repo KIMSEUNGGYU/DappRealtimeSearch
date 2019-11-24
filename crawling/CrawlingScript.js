@@ -1,23 +1,24 @@
 const request = require('request');
 const DomParser = require('dom-parser');
+const moment = require('moment');
 const parser = new DomParser();
+const now = new Date();
 
 function makeOptions() {
     const uriJson = {
-        google:
-            'https://trends.google.com/trends/trendingsearches/daily?geo=KR',
+        // google:'https://trends.google.com/trends/trendingsearches/daily?geo=KR',
         naver: 'https://naver.com',
     };
 
     const options = {};
     const hostname = process.argv[2];
-
-    if (uriJson[hostname]) {
-        options.uri = uriJson[hostname];
-        options.method = 'GET';
-    } else {
-        console.log(Error(`${hostname} is not in uri json properties`));
+    if (!uriJson[hostname]) {
+        throw new Error(`${hostname} is not in uri json properties`);
     }
+
+    options.uri = uriJson[hostname];
+    options.method = 'GET';
+
     return getPageHTML(options, hostname);
 }
 
@@ -30,11 +31,8 @@ function getPageHTML(options, hostname) {
             let docs = parser
                 .parseFromString(body, 'text/html')
                 .rawHTML.split('\n');
-
-            if (hostname == 'google') {
-                return parsingGoogle(docs);
-            } else if (hostname == 'naver') {
-                return parsingNaver(docs);
+            if (hostname === 'naver') {
+                return parsingNaver(hostname, docs);
             }
         } else {
             return response.statusCode;
@@ -42,71 +40,38 @@ function getPageHTML(options, hostname) {
     });
 }
 
-function parsingNaver(docs) {
-    let ranks = [];
-    let keywords = [];
-    docs.forEach(element => {
-        if (element.includes('class="ah_r"')) {
-            rank = element
-                .replace('<span class="ah_r">', '')
-                .replace('</span>', '');
-            ranks.push(rank);
-        } else if (element.includes('class="ah_k"')) {
-            keyword = element
+function parsingNaver(hostname, docs) {
+    let result = {};
+    let data = [];
+    let count = 0;
+
+    docs.map(function(element, index) {
+        if (count >= 20) {
+            return null;
+        }
+        if (element.includes('class="ah_k"')) {
+            count += 1;
+            let rank = count;
+            let keyword = element
                 .replace('<span class="ah_k">', '')
                 .replace('</span>', '');
-            keywords.push(keyword);
+            data.push({
+                rank: count,
+                keyword: keyword,
+            });
         }
     });
-    console.log(ranks);
-    console.log(keywords);
-}
-function parsingGoogle(docs) {
-    let ranks = [];
-    let keywords = [];
-    docs.forEach(element => {
-        // console.log(element);
-        // if (element.includes('class="trending-feed-page-wrapper"')) {
-        // console.log(element);
-    });
-}
 
+    result['hostname'] = hostname;
+    result['data'] = data;
+    result['date'] = moment().format('YYYY-MM-DD HH:mm:ss');
+
+    console.log(result);
+}
 makeOptions();
 
-// function getPageHTML() {
-//     // const options = {
-//     //     uri: process.argv[2] || 'https://naver.com',
-//     //     method: 'GET',
-//     // };
-
-//     request.get(options, function(error, response, body) {
-//         if (error) {
-//             console.log(`There is Error : ${error}`);
-//         }
-//         if (response.statusCode == 200) {
-//             // console.log(response.body);
-//             var doc = parser.parseFromString(body, 'text/html');
-//             docs = doc.rawHTML.split('\n');
-//             rank = [];
-//             keywords = [];
-
-//             docs.forEach(element => {
-//                 if (element.includes('class="ah_r"')) {
-//                     key = element
-//                         .replace('<span class="ah_r">', '')
-//                         .replace('</span>', '');
-//                     rank.push(key);
-//                 } else if (element.includes('class="ah_k"')) {
-//                     value = element
-//                         .replace('<span class="ah_k">', '')
-//                         .replace('</span>', '');
-//                     keywords.push(value);
-//                 }
-//             });
-//             console.log(rank);
-//             console.log(keywords);
-//         }
-//     });
-// }
-
-// getPageHTML();
+result = {
+    host: '',
+    data: [{}, {}],
+    time: {},
+};
