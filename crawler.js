@@ -3,8 +3,6 @@ const cheerio = require('cheerio');
 
 const URI = {
   naver: 'https://www.naver.com/',
-  google: 'https://trends.google.com/trends/trendingsearches/daily?geo=KR',
-  // google: 'https://trends.google.com/trends/trendingsearches/daily?geo=US',
 };
 
 /**
@@ -14,7 +12,6 @@ const URI = {
 const getHtml = async hostname => {
   try {
     return await axios.get(URI[hostname]);
-    // return await axios.get('https://www.naver.com/');
   } catch (error) {
     console.error(error);
   }
