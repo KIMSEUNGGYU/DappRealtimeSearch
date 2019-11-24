@@ -1,0 +1,38 @@
+:root {
+  --naver-clor: #2db400;
+  --background-color: #f5f6f7;
+}
+
+body {
+  /* padding: 50px; */
+  background: var(--background-color);
+  font: 16px 'Lucida Grande', Helvetica, Arial, sans-serif;
+}
+
+.container {
+  height: 80%;
+  width: 70%;
+  background: white;
+  border: solid 1px red;
+  margin: 10%;
+  margin-left: 13%;
+}
+
+h1 {
+  font-size: 3rem;
+  text-align: center;
+  color: var(--naver-clor);
+}
+
+table {
+  width: 100%;
+  font-size: 1.25rem;
+}
+table tr td {
+  text-align: center;
+}
+.base {
+  color: red;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
