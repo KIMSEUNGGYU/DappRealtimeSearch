@@ -1,7 +1,9 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const request = require('request');
 const log = console.log;
 
+// NAVER Crawling
 const getHtml = async () => {
   try {
     return await axios.get('https://www.naver.com/');
