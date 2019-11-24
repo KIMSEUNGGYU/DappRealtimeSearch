@@ -38,11 +38,14 @@ const NAVERCrawling = html => {
         .text(),
     };
   });
-
-  console.log(dataList);
+  return dataList;
 };
 
 // 프로그램 시작
-(function main() {
-  getHtml('naver').then(NAVERCrawling);
-})();
+function naverCrawling() {
+  return getHtml('naver').then(NAVERCrawling);
+}
+
+module.exports = {
+  naverCrawling,
+};
