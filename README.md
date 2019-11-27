@@ -17,4 +17,6 @@ DappRealtimeSearch
 
 ## 커밋 컨벤션
 
+- [wiki](https://github.com/IGMD/DappRealtimeSearch/wiki/%EC%BB%A4%EB%B0%8B-%EC%BB%A8%EB%B2%A4%EC%85%98)
+
 - [Notion](https://www.notion.so/kimseunggyu/commit-convention-5c499224319242c087e95e052ab64518)
