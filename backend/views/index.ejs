@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" href="/stylesheets/index.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>네이버 크롤링</h1>
+      <table>
+        <tr>
+          <td class="base">순위</td>
+          <td class="base">데이터</td>
+        </tr>
+        <% crawlingData.forEach(data => { %>
+        <tr>
+          <td><%= data.rank %></td>
+          <td><%= data.keyword %></td>
+        </tr>
+        <% })%>
+      </table>
+    </div>
+  </body>
+</html>
