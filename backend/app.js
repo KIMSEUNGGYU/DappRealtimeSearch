@@ -4,6 +4,20 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+// db config
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+const url = 'mongodb://localhost:27017/realtimesearch';
+mongoose.connect(url);
+
+const db = mongoose.connection;
+
+db.on('error', err => {
+  console.log('Error : ', err);
+}).on('open', () => {
+  console.log('Open Event');
+});
+
 // 라우터 가져 오기
 const indexRouter = require('./routes/index');
 const app = express();
