@@ -1,26 +1,29 @@
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
-// db config
 const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
-const url = 'mongodb://localhost:27017/realtimesearch';
-mongoose.connect(url);
+const app = express();
 
-const db = mongoose.connection;
+// [ 라우터 가져 오기 ]
+const indexRouter = require('./routes/index');
 
-db.on('error', err => {
-  console.log('Error : ', err);
-}).on('open', () => {
-  console.log('Open Event');
+// [ CONFIGURE mongoose ]
+// CONNECT TO MONGODB SERVER
+// mongoose.Promise = global.Promise;
+mongoose.connect(process.env.DB_URL, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
 });
 
-// 라우터 가져 오기
-const indexRouter = require('./routes/index');
-const app = express();
+const db = mongoose.connection;
+db.on('error', err => {
+  console.error('Error : ', err);
+}).on('open', () => {
+  console.log('Connect mongodb');
+});
 
 // view engine setup
 app.engine('html', require('ejs').renderFile);

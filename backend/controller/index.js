@@ -1,24 +1,18 @@
 const { naverCrawling } = require('../crawler');
-const Naver = require('../model/naver');
+const { naver } = require('../model/naver');
 
 async function getHome(req, res, next) {
   const naverCrawlingData = await naverCrawling();
 
+  // db 에서 모든 데이터 가져오는 코드
+  // naver.findAllData();
+
+  // db 에 데이터 넣기
+  // naver.insertCrawlingData(naverCrawlingData);
+
   res.render('index', {
     title: '네이버 크롤링',
     crawlingData: naverCrawlingData,
-  });
-
-  // db 에 데이터 설정?
-  const naverData = new Naver({
-    date: new Date(),
-    data: naverCrawlingData,
-  });
-
-  // db 에 데이터 넣기
-  naverData.save((err, data) => {
-    if (err) return console.err('err', err);
-    else console.log('data', data);
   });
 }
 
