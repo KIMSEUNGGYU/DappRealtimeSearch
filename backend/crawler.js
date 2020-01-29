@@ -1,7 +1,7 @@
-const axios = require('axios');
 const cheerio = require('cheerio');
+const puppeteer = require('puppeteer');
 
-const URI = {
+const URL = {
   naver: 'https://www.naver.com/',
 };
 
@@ -10,25 +10,32 @@ const URI = {
  * @param {string} hostname 크롤링하고자 하는 사이트 hostname
  */
 const getHtml = async hostname => {
-  try {
-    return await axios.get(URI[hostname]);
-  } catch (error) {
-    console.error(error);
-  }
+  const browser = await puppeteer.launch({
+    headless: true,
+    devtools: true,
+  });
+
+  const page = await browser.newPage();
+  await page.goto(URL[hostname], { waitUntil: 'networkidle2' });
+  const html = await page.$eval('#NM_RTK_ROLLING_WRAP', e => e.outerHTML);
+  browser.close();
+  return html;
 };
 
 /**
  * 네이버 실시간 검색어를 크롤링해 rank, keyword object 배열 생성
  * @param {object} html 네이버 html 코드?
  */
-const NAVERCrawling = html => {
-  let dataList = [];
-  const $ = cheerio.load(html.data);
-  const $bodyList = $('div.ah_roll ul')
+const NAVERCrawling = async html => {
+  const dataList = [];
+  // const html = await getHtml();
+
+  const $ = cheerio.load(html);
+  const $tagList = $('.ah_l')
     .children('li.ah_item')
     .children('a');
 
-  $bodyList.each(function(index) {
+  $tagList.each(function(index) {
     dataList[index] = {
       rank: $(this)
         .find('span.ah_r')
@@ -38,6 +45,13 @@ const NAVERCrawling = html => {
         .text(),
     };
   });
+
+  // 20 개 이하 데이터 맞추기
+  while (true) {
+    if (dataList.length <= 20) break;
+    dataList.pop();
+  }
+
   return dataList;
 };
 
@@ -45,6 +59,12 @@ const NAVERCrawling = html => {
 function naverCrawling() {
   return getHtml('naver').then(NAVERCrawling);
 }
+
+// 테스트 실행
+// (async function main() {
+//   const data = await naverCrawling();
+//   console.log('data', data);
+// })();
 
 module.exports = {
   naverCrawling,
